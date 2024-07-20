@@ -60,6 +60,17 @@
     </div>
 
     <script>
+
+chrome.storage.sync.set({ key: 'my value' }).then(() => {
+    console.log("Value is set");
+  });
+  
+  chrome.storage.sync.get(["key"]).then((result) => {
+    console.log("Value is " + result.key);
+  });
+
+
+
         var mem = {};
         var categories = [];
         var videos_times = {};
