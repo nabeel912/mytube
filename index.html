@@ -45,8 +45,17 @@
 </head>
 
 <body>
+    
     <div class="w3-bar w3-black" id="bar_categories">
         <button type="button" class="w3-bar-item w3-button w3-right" action="add_category">add category</button>
+        <div class="w3-dropdown-hover w3-right">
+            <button class="w3-button">Actions</button>
+            <div class="w3-dropdown-content w3-bar-block w3-card-4">
+              <a class="w3-bar-item w3-button" action="save">Save</a>
+              <a class="w3-bar-item w3-button" action="load">Load</a>
+              <a class="w3-bar-item w3-button" action="about">About</a>
+            </div>
+          </div>
     </div>
     <div class="w3-row">
         <div class="w3-col" style="width: 400px;">
@@ -115,6 +124,61 @@
             </div>
         </li>
     </div>
+
+
+
+
+    <!--About Modal-->
+    <div id="modal_about" class="w3-modal">
+        <div class="w3-modal-content w3-card-4 w3-animate-zoom" style="max-width:600px">
+    
+          <div class="w3-center"><br>
+            <span onclick="document.getElementById('modal_about').style.display='none'" class="w3-button w3-xlarge w3-hover-red w3-display-topright" title="Close Modal">&times;</span>
+            <h3>About</h3>
+          </div>
+    
+          <form class="w3-container" action="/action_page.php">
+            <div class="w3-section">
+              <label><b>Username</b></label>
+              <input class="w3-input w3-border w3-margin-bottom" type="text" placeholder="Enter Username" name="usrname" required>
+              <label><b>Password</b></label>
+              <input class="w3-input w3-border" type="password" placeholder="Enter Password" name="psw" required>
+              <button class="w3-button w3-block w3-green w3-section w3-padding" type="submit">Login</button>
+            </div>
+          </form>
+    
+          <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">
+            <button onclick="document.getElementById('modal_about').style.display='none'" type="button" class="w3-button w3-red">Close</button>
+          </div>
+    
+        </div>
+      </div>
+
+        <!--Load Modal-->
+        <div id="modal_load" class="w3-modal">
+            <div class="w3-modal-content w3-card-4 w3-animate-zoom" style="max-width:600px">
+        
+              <div class="w3-center"><br>
+                <span onclick="document.getElementById('modal_load').style.display='none'" class="w3-button w3-xlarge w3-hover-red w3-display-topright" title="Close Modal">&times;</span>
+                <h3>Load</h3>
+              </div>
+        
+              <form class="w3-container" action="/action_page.php">
+                <div class="w3-section">
+                  <label><b>Username</b></label>
+                  <input class="w3-input w3-border w3-margin-bottom" type="text" placeholder="Enter Username" name="usrname" required>
+                  <label><b>Password</b></label>
+                  <input class="w3-input w3-border" type="password" placeholder="Enter Password" name="psw" required>
+                  <button class="w3-button w3-block w3-green w3-section w3-padding" type="submit">Login</button>
+                </div>
+              </form>
+        
+              <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">
+                <button onclick="document.getElementById('modal_load').style.display='none'" type="button" class="w3-button w3-red">Close</button>
+              </div>
+        
+            </div>
+          </div>
 
 
 </body>

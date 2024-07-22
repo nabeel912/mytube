@@ -18,8 +18,8 @@ function save_mem() {
 
     var videos_times_str = JSON.stringify(videos_times);
     localStorage.setItem("videos_times", videos_times_str);
-    
-    
+
+
     localStorage.setItem("selected_category", current_category.id);
     localStorage.setItem("selected_item", current_item.youtube_id);
 
@@ -32,7 +32,7 @@ function youtube_is_ready() {
     var item = current_category.list.find(obj => {
         return obj.youtube_id == youtube_id
     });
-    if(item) {
+    if (item) {
         $(`#video_list [youtube-id="${item.youtube_id}"]`).click();
     } else {
         $(`#video_list [youtube-id]`).first().click();
@@ -53,7 +53,7 @@ function render_categories() {
         var category = categories.find(obj => {
             return obj.id == category_id
         });
-        if(category) {
+        if (category) {
             $(`#bar_categories [category-id="${category.id}"]`).click();
         } else {
             $('#bar_categories [category-id]').first().click();
@@ -105,7 +105,7 @@ $(function () {
             return obj.id == category_id
         });
         var text = prompt("Enter a new name for the category: " + category.title, category.title);
-        if(text) {
+        if (text) {
             $(this).find('[title]').text(text);
             category.title = text;
         }
@@ -141,19 +141,17 @@ $(function () {
         }
     })
     $('[action="add_item"]').click(function () {
-
-
         navigator.clipboard.readText()
             .then(text => {
                 var user_input = '';
-                if(text.toLowerCase().indexOf('http') === 0) {
+                if (text.toLowerCase().indexOf('http') === 0) {
                     user_input = text;
                 }
                 var text = prompt("Please enter youtube url or youtube id", user_input);
                 if (text && text.length > 15) {
                     var youtube_id = getYoutubeId(text);
                     add_youtube(youtube_id);
-                } else if(text) {
+                } else if (text) {
                     var youtube_id = text;
                     add_youtube(youtube_id);
                 }
@@ -178,10 +176,38 @@ $(function () {
             const index = categories.indexOf(category);
             categories.splice(index, 1); // 2nd parameter means remove one item only
             $(this).closest('[category-id]').remove();
-            save_mem();   
+            save_mem();
         }
     })
+
+    //actions
+    $(document).on('click', '[action="save"]', function () {
+        var cont = {categories: categories, videos_times: videos_times};
+        var text = JSON.stringify(cont, null, "\t");
+        download('912tube_' + get_new_id() + '.json', text)
+    })
+    $(document).on('click', '[action="about"]', function () {
+        $('#modal_about').show();
+    })
+    $(document).on('click', '[action="load"]', function () {
+        $('#modal_load').show();
+    })
 })
+
+
+
+function download(filename, text) {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+}
 
 
 function add_youtube(youtube_id) {
@@ -189,7 +215,7 @@ function add_youtube(youtube_id) {
     var item = current_category.list.find(obj => {
         return obj.youtube_id == youtube_id
     });
-    if(item) {
+    if (item) {
         alert('It is already added...');
     } else {
         player2.cueVideoById(youtube_id, 0);
@@ -215,7 +241,7 @@ document.addEventListener('keydown', function (event) {
         navigator.clipboard.readText()
             .then(text => {
                 var youtube_id = getYoutubeId(text);
-                if(youtube_id) {
+                if (youtube_id) {
                     add_youtube(youtube_id);
                 }
             })

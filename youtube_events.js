@@ -15,6 +15,7 @@ function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
         height: '585',
         width: '1040',
+        rel: 0,
         //videoId: 'M7lc1UVf-VE',
         playerVars: {
             'playsinline': 1
@@ -27,6 +28,7 @@ function onYouTubeIframeAPIReady() {
     player2 = new YT.Player('player2', {
         height: '450',
         width: '800',
+
         //videoId: 'M7lc1UVf-VE',
         playerVars: {
             'playsinline': 1
