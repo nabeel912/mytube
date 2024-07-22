@@ -6,6 +6,7 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="ui_events.js"></script>
     <script src="youtube_events.js"></script>
+    <meta charset="UTF-8">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -35,7 +36,10 @@
         iframe {
             width: 100%;
             height: calc((100vw - 400px)/1.78);
-            max-width: calc((100vh)*1.78);
+            max-height: calc(100vh - 100px);
+        }
+        .remove-category:hover {
+            color: red !important;
         }
     </style>
 </head>
@@ -53,23 +57,13 @@
         <div class="w3-rest">
             <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
             <div id="player"></div>
-            
+
             <h3 class="zain-extrabold" id="txt_video_title"></h3>
             <div id="player2" style="display: none;"></div>
         </div>
     </div>
 
     <script>
-
-chrome.storage.sync.set({ key: 'my value' }).then(() => {
-    console.log("Value is set");
-  });
-  
-  chrome.storage.sync.get(["key"]).then((result) => {
-    console.log("Value is " + result.key);
-  });
-
-
 
         var mem = {};
         var categories = [];
@@ -86,7 +80,7 @@ chrome.storage.sync.set({ key: 'my value' }).then(() => {
         } else {
             categories = [
                 {
-                    title: 'general', list: [
+                    id: 1, title: 'general', list: [
                         { youtube_id: 'M7lc1UVf-VE', title: 'YouTube Developers Live: Embedded Web Player Customization' },
                         { youtube_id: 'QPTwsoa47do', title: 'كيف تحصل على وظيفة وتتطوّر مهنيًا | بودكاست فنجان' },
                         { youtube_id: '4aa61-zDiSo', title: 'الازدهار المالي: كيف يدير الأثرياء أموالهم ويضاعفون ثرواتهم بسرعة أكبر من 99٪ من الناس في العالم' },
@@ -95,7 +89,7 @@ chrome.storage.sync.set({ key: 'my value' }).then(() => {
                         { youtube_id: 'om7jdf4RI74', title: '25 Free Co-Op Games for Friends (That Are Worth Playing)' },
                     ],
                 }, {
-                    title: 'gaming', list: [
+                    id: 2, title: 'gaming', list: [
                         { youtube_id: 'UwH9lX4efdc', title: 'I Uncovered Minecraft\'s Oldest Mystery (Giant Alex)' }
                     ]
                 }

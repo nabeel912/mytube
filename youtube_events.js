@@ -15,7 +15,7 @@ function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
         height: '585',
         width: '1040',
-        videoId: 'M7lc1UVf-VE',
+        //videoId: 'M7lc1UVf-VE',
         playerVars: {
             'playsinline': 1
         },
@@ -27,13 +27,13 @@ function onYouTubeIframeAPIReady() {
     player2 = new YT.Player('player2', {
         height: '450',
         width: '800',
-        videoId: 'M7lc1UVf-VE',
+        //videoId: 'M7lc1UVf-VE',
         playerVars: {
             'playsinline': 1
         },
         events: {
-            'onReady': onPlayerReady,
-            'onStateChange': onPlayerStateChange
+            //'onReady': onPlayerReady,
+            //'onStateChange': onPlayerStateChange
         }
     });
 }
@@ -48,8 +48,8 @@ function playYoutube(youtube_id, time) {
 
 // 4. The API will call this function when the video player is ready.
 function onPlayerReady(event) {
-    event.target.playVideo();
-    monitor_video_time();
+    //event.target.playVideo();
+    youtube_is_ready();
 }
 
 function onPlayerStateChange(event) {
@@ -72,4 +72,9 @@ function getSeekTime() {
 }
 function getVideoTitle() {
     return player.getVideoData().title;
+}
+
+function getYoutubeId(url){
+    var match = url.match(/^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/);
+    return (match&&match[7].length==11)?match[7]:false;
 }
