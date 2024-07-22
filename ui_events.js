@@ -7,7 +7,7 @@ function monitor_video_time() {
         if (current_item && current_item.youtube_id) {
             var seek_time = getSeekTime();
             videos_times[current_item.youtube_id] = seek_time;
-            save_mem();
+            save_videos_times();
         }
         monitor_video_time();
     }, 1000);
@@ -23,9 +23,12 @@ function save_mem() {
     localStorage.setItem("selected_category", current_category.id);
     localStorage.setItem("selected_item", current_item.youtube_id);
 
-    var mem_str = JSON.stringify(mem);
-    localStorage.setItem("mem", mem_str);
 }
+function save_videos_times() {
+    var videos_times_str = JSON.stringify(videos_times);
+    localStorage.setItem("videos_times", videos_times_str);
+}
+
 
 function youtube_is_ready() {
     var youtube_id = localStorage.getItem("selected_item");
@@ -182,7 +185,7 @@ $(function () {
 
     //actions
     $(document).on('click', '[action="save"]', function () {
-        var cont = {categories: categories, videos_times: videos_times};
+        var cont = {categories: categories, videos_times: videos_times, selected_category: current_category.id, selected_item : current_item.youtube_id};
         var text = JSON.stringify(cont, null, "\t");
         download('912tube_' + get_new_id() + '.json', text)
     })
@@ -254,3 +257,23 @@ function get_new_id() {
     let ms = d.valueOf();
     return ms;
 }
+
+
+
+
+
+
+//load file
+$(document).on('click', '[action="load_file"]', function () {
+    let fr = new FileReader();
+    fr.onload = function () {
+        var mem = JSON.parse(fr.result);
+        localStorage.setItem('categories', JSON.stringify(mem.categories));
+        localStorage.setItem('categvideos_timesories', JSON.stringify(mem.videos_times));
+        localStorage.setItem('current_category', JSON.stringify(mem.selected_category));
+        localStorage.setItem('current_item', JSON.stringify(mem.selected_item));
+        location.reload();
+    }
+    var file = document.getElementById('file').files[0];
+    fr.readAsText(file);
+})

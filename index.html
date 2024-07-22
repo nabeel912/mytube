@@ -73,8 +73,6 @@
     </div>
 
     <script>
-
-        var mem = {};
         var categories = [];
         var videos_times = {};
         var videos_times_str = localStorage.getItem("videos_times");
@@ -137,15 +135,15 @@
             <h3>About</h3>
           </div>
     
-          <form class="w3-container" action="/action_page.php">
+          <div class="w3-container">
             <div class="w3-section">
-              <label><b>Username</b></label>
-              <input class="w3-input w3-border w3-margin-bottom" type="text" placeholder="Enter Username" name="usrname" required>
-              <label><b>Password</b></label>
-              <input class="w3-input w3-border" type="password" placeholder="Enter Password" name="psw" required>
-              <button class="w3-button w3-block w3-green w3-section w3-padding" type="submit">Login</button>
+                <p>
+                    Developed by nabeel912@gmail.com
+                    <br />
+                    <a target="_blank" href="https://github.com/nabeel912/mytube">github</a>
+                </p>
             </div>
-          </form>
+          </div>
     
           <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">
             <button onclick="document.getElementById('modal_about').style.display='none'" type="button" class="w3-button w3-red">Close</button>
@@ -163,15 +161,13 @@
                 <h3>Load</h3>
               </div>
         
-              <form class="w3-container" action="/action_page.php">
+              <div class="w3-container">
                 <div class="w3-section">
                   <label><b>Username</b></label>
-                  <input class="w3-input w3-border w3-margin-bottom" type="text" placeholder="Enter Username" name="usrname" required>
-                  <label><b>Password</b></label>
-                  <input class="w3-input w3-border" type="password" placeholder="Enter Password" name="psw" required>
-                  <button class="w3-button w3-block w3-green w3-section w3-padding" type="submit">Login</button>
+                  <input class="w3-input w3-border w3-margin-bottom" type="file" placeholder="load filename" name="filename" id="file" required>
+                  <button class="w3-button w3-block w3-green w3-section w3-padding" action="load_file">Load</button>
                 </div>
-              </form>
+              </div>
         
               <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">
                 <button onclick="document.getElementById('modal_load').style.display='none'" type="button" class="w3-button w3-red">Close</button>
