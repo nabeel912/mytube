@@ -1,67 +1,36 @@
-<!DOCTYPE html>
 <html>
-
 <head>
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script src="ui_events.js"></script>
-    <script src="youtube_events.js"></script>
     <meta charset="UTF-8">
-
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Zain:wght@200;300;400;700;800;900&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Zain:wght@200;300;400;700;800;900&display=swap" rel="stylesheet">
 
-    <style>
-        body {
-            font-size: 12px;
-        }
-
-        .rtl {
-            direction: rtl;
-            text-align: right;
-        }
-
-        img {
-            width: 70%;
-        }
-
-        .zain-extrabold {
-            font-family: "Zain", sans-serif;
-            font-weight: 800;
-            font-style: normal;
-        }
-
-        iframe {
-            width: 100%;
-            height: calc((100vw - 400px)/1.78);
-            max-height: calc(100vh - 100px);
-        }
-        .remove-category:hover {
-            color: red !important;
-        }
-    </style>
+    <link href="style.css" rel="stylesheet">
+    <script src="ui_events.js"></script>
+    <script src="youtube_events.js"></script>
 </head>
 
 <body>
-    
     <div class="w3-bar w3-black" id="bar_categories">
-        <button type="button" class="w3-bar-item w3-button w3-right" action="add_category">add category</button>
+        <button type="button" class="w3-bar-item w3-button w3-right" action="add_category">Add category</button>
+        <button type="button" class="w3-bar-item w3-button w3-right" style="display: none;">Status: <span
+                id="status"></span></button>
         <div class="w3-dropdown-hover w3-right">
             <button class="w3-button">Actions</button>
             <div class="w3-dropdown-content w3-bar-block w3-card-4">
-              <a class="w3-bar-item w3-button" action="save">Save</a>
-              <a class="w3-bar-item w3-button" action="load">Load</a>
-              <a class="w3-bar-item w3-button" action="about">About</a>
+                <a class="w3-bar-item w3-button" action="save">Save</a>
+                <a class="w3-bar-item w3-button" action="load">Load</a>
+                <a class="w3-bar-item w3-button" action="about">About</a>
             </div>
-          </div>
+        </div>
     </div>
     <div class="w3-row">
         <div class="w3-col" style="width: 400px;">
-            <ul class="w3-ul w3-card-4" id="video_list">
+            <ul class="w3-ul w3-card-4" id="video_list" style="overflow-y: scroll;">
             </ul>
-            <button type="button" class="w3-button w3-light-gray" action="add_item">add item</button>
+            <button type="button" class="w3-button w3-gray" action="add_item">Add Youtube</button>
         </div>
         <div class="w3-rest">
             <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
@@ -72,53 +41,24 @@
         </div>
     </div>
 
-    <script>
-        var categories = [];
-        var videos_times = {};
-        var videos_times_str = localStorage.getItem("videos_times");
-        if (videos_times_str) {
-            videos_times = JSON.parse(localStorage.getItem("videos_times"));
-        }
-
-
-        var categories_str = localStorage.getItem("categories");
-        if (categories_str) {
-            categories = JSON.parse(categories_str);
-        } else {
-            categories = [
-                {
-                    id: 1, title: 'general', list: [
-                        { youtube_id: 'M7lc1UVf-VE', title: 'YouTube Developers Live: Embedded Web Player Customization' },
-                        { youtube_id: 'QPTwsoa47do', title: 'كيف تحصل على وظيفة وتتطوّر مهنيًا | بودكاست فنجان' },
-                        { youtube_id: '4aa61-zDiSo', title: 'الازدهار المالي: كيف يدير الأثرياء أموالهم ويضاعفون ثرواتهم بسرعة أكبر من 99٪ من الناس في العالم' },
-                        { youtube_id: 'bclSDhAXQaw', title: 'Couch Co-op is Alive and Well: These Games Prove It!' },
-                        { youtube_id: '1ATLKEKYAHw', title: '80 New Couch Co-op Games From 2023 You Need To Know!' },
-                        { youtube_id: 'om7jdf4RI74', title: '25 Free Co-Op Games for Friends (That Are Worth Playing)' },
-                    ],
-                }, {
-                    id: 2, title: 'gaming', list: [
-                        { youtube_id: 'UwH9lX4efdc', title: 'I Uncovered Minecraft\'s Oldest Mystery (Giant Alex)' }
-                    ]
-                }
-            ]
-        }
-
-
-
-    </script>
-
-
     <!--templates-->
     <div id="li_template" style="display: none;">
         <li class="w3-bar" youtube-id="{youtube_id}">
-            <div class="w3-col" style="width: 80px;">
-                <img src="http://img.youtube.com/vi/{youtube_id}/1.jpg">
+            <div class="w3-row">
+                <div class="w3-col" style="width: 80px;">
+                    <img src="http://img.youtube.com/vi/{youtube_id}/1.jpg">
+                </div>
+                <div class="w3-col {class}" style="width: calc(100% - 110px);">
+                    {title}
+                </div>
+                <div class="w3-col" style="width: 20px">
+                    <span class="w3-button" action="remove_list_item">×</span>
+                </div>
             </div>
-            <div class="w3-col {class}" style="width: calc(100% - 110px);">
-                {title}
-            </div>
-            <div class="w3-col" style="width: 20px">
-                <span class="w3-button" action="remove_list_item">×</span>
+            <div class="w3-row" style="width: calc(100% - 20px);">
+                <div class="w3-light-gray w3-tiny" style="height: 1px;">
+                    <div class="w3-container w3-gray" percentage-bar style="width:{percentage}%; height: 1px;"></div>
+                </div>
             </div>
         </li>
     </div>
@@ -129,59 +69,67 @@
     <!--About Modal-->
     <div id="modal_about" class="w3-modal">
         <div class="w3-modal-content w3-card-4 w3-animate-zoom" style="max-width:600px">
-    
-          <div class="w3-center"><br>
-            <span onclick="document.getElementById('modal_about').style.display='none'" class="w3-button w3-xlarge w3-hover-red w3-display-topright" title="Close Modal">&times;</span>
-            <h3>About</h3>
-          </div>
-    
-          <div class="w3-container">
-            <div class="w3-section">
-                <p>
-                    To syncronize categories and videos. please, utilize chrome plugin:
-                    <br />
-                    <img style="width: 32px;" src="https://lh3.googleusercontent.com/KUynVY0KpWj_H-wu4ZgXEhFlTbF2wxGK1qWBSxNOBLJS1V5qj5meBE3EbUp7QGOj7pDvpjds8OqVpFu0OFuFgggu=s60" />
-                    <a target="_blank" href="https://chromewebstore.google.com/detail/nlgkphpdbpmpdngngdafeggajlblhhko">LocalStorage Sync</a>
-                </p>
-                <br />
-                <p>
-                    Developed by nabeel912@gmail.com
-                    <br />
-                    <a target="_blank" href="https://github.com/nabeel912/mytube">github</a>
-                </p>
-            </div>
-          </div>
-    
-          <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">
-            <button onclick="document.getElementById('modal_about').style.display='none'" type="button" class="w3-button w3-red">Close</button>
-          </div>
-    
-        </div>
-      </div>
 
-        <!--Load Modal-->
-        <div id="modal_load" class="w3-modal">
-            <div class="w3-modal-content w3-card-4 w3-animate-zoom" style="max-width:600px">
-        
-              <div class="w3-center"><br>
-                <span onclick="document.getElementById('modal_load').style.display='none'" class="w3-button w3-xlarge w3-hover-red w3-display-topright" title="Close Modal">&times;</span>
-                <h3>Load</h3>
-              </div>
-        
-              <div class="w3-container">
-                <div class="w3-section">
-                  <label><b>Filename</b></label>
-                  <input class="w3-input w3-border w3-margin-bottom" type="file" placeholder="load filename" name="filename" id="file" required>
-                  <button class="w3-button w3-block w3-green w3-section w3-padding" action="load_file">Load</button>
-                </div>
-              </div>
-        
-              <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">
-                <button onclick="document.getElementById('modal_load').style.display='none'" type="button" class="w3-button w3-red">Close</button>
-              </div>
-        
+            <div class="w3-center"><br>
+                <span onclick="document.getElementById('modal_about').style.display='none'"
+                    class="w3-button w3-xlarge w3-hover-red w3-display-topright" title="Close Modal">&times;</span>
+                <h3>About</h3>
             </div>
-          </div>
+
+            <div class="w3-container">
+                <div class="w3-section">
+                    <p>
+                        To syncronize categories and videos. please, utilize chrome plugin:
+                        <br />
+                        <img style="width: 32px;"
+                            src="https://lh3.googleusercontent.com/KUynVY0KpWj_H-wu4ZgXEhFlTbF2wxGK1qWBSxNOBLJS1V5qj5meBE3EbUp7QGOj7pDvpjds8OqVpFu0OFuFgggu=s60" />
+                        <a target="_blank"
+                            href="https://chromewebstore.google.com/detail/nlgkphpdbpmpdngngdafeggajlblhhko">LocalStorage
+                            Sync</a>
+                    </p>
+                    <br />
+                    <p>
+                        Developed by nabeel912@gmail.com
+                        <br />
+                        <a target="_blank" href="https://github.com/nabeel912/mytube">github</a>
+                    </p>
+                </div>
+            </div>
+
+            <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">
+                <button onclick="document.getElementById('modal_about').style.display='none'" type="button"
+                    class="w3-button w3-red">Close</button>
+            </div>
+
+        </div>
+    </div>
+
+    <!--Load Modal-->
+    <div id="modal_load" class="w3-modal">
+        <div class="w3-modal-content w3-card-4 w3-animate-zoom" style="max-width:600px">
+
+            <div class="w3-center"><br>
+                <span onclick="document.getElementById('modal_load').style.display='none'"
+                    class="w3-button w3-xlarge w3-hover-red w3-display-topright" title="Close Modal">&times;</span>
+                <h3>Load</h3>
+            </div>
+
+            <div class="w3-container">
+                <div class="w3-section">
+                    <label><b>Filename</b></label>
+                    <input class="w3-input w3-border w3-margin-bottom" type="file" placeholder="load filename"
+                        name="filename" id="file" required>
+                    <button class="w3-button w3-block w3-green w3-section w3-padding" action="load_file">Load</button>
+                </div>
+            </div>
+
+            <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">
+                <button onclick="document.getElementById('modal_load').style.display='none'" type="button"
+                    class="w3-button w3-red">Close</button>
+            </div>
+
+        </div>
+    </div>
 
 
 </body>

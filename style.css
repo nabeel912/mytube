@@ -1,0 +1,40 @@
+* {
+    font-family: "Zain", sans-serif;
+    font-style: normal;
+    font-size: 15px;
+}
+
+.rtl {
+    direction: rtl;
+    text-align: right;
+}
+
+img {
+    width: 70%;
+}
+
+.zain-extrabold {
+    font-family: "Zain", sans-serif;
+    font-weight: 800;
+    font-style: normal;
+}
+
+iframe {
+    width: 100%;
+    height: calc((100vw - 400px)/1.78);
+    max-height: calc(100vh - 100px);
+}
+
+#video_list {
+    height: calc((100vw - 400px)/1.78);
+    max-height: calc(100vh - 100px);
+}
+
+.remove-category:hover {
+    color: red !important;
+}
+
+.w3-ul li {
+    padding: 8px 16px;
+    border-bottom: 1px solid #eee;
+}

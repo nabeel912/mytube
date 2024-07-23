@@ -75,6 +75,9 @@ function getSeekTime() {
 function getVideoTitle() {
     return player.getVideoData().title;
 }
+function getVideoDuration() {
+    return player.getDuration();
+}
 
 function getYoutubeId(url){
     var match = url.match(/^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/);
