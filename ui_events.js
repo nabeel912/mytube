@@ -32,15 +32,13 @@ if (categories_str) {
 
 function monitor_video_time() {
     setTimeout(() => {
-        if (current_item && current_item.youtube_id) {
+        if (current_item && current_item.youtube_id && player.getVideoData().video_id == current_item.youtube_id) {
             var duration = getVideoDuration();
             var seek_time = getSeekTime();
             if (Math.ceil(videos_times[current_item.youtube_id]) == Math.ceil(getVideoDuration())) {
-                $('#status').text('Done');
                 player.cueVideoById(current_item.youtube_id);
                 videos_times[current_item.youtube_id] = 0;
             } else {
-                $('#status').text('playing');
                 videos_times[current_item.youtube_id] = seek_time;
                 if (!current_item.duration) { //for backward compatibility
                     current_item.duration = duration;
@@ -48,10 +46,11 @@ function monitor_video_time() {
                 }
                 save_videos_times();
             }
-            var percentage = parseFloat(0);
+            var percentage = 0;
 
-            if (videos_times[current_item.youtube_id] & duration) {
+            if (videos_times[current_item.youtube_id] && duration) {
                 percentage = videos_times[current_item.youtube_id] / duration * 100.0;
+                percentage = Math.ceil(percentage);
             }
             $(`li[youtube-id="${current_item.youtube_id}"] [percentage-bar]`).css('width', percentage + "%")
         }
@@ -114,7 +113,7 @@ function render_categories() {
 }
 function render_list(category) {
     var html_list = "";
-    for (var item of category.list) {
+    for (var item of category.list || []) {
         html_list += get_html_youtube_item(item);
     }
     $('#video_list').html(html_list);
@@ -125,7 +124,16 @@ function render_list(category) {
     }, 0);
 }
 function get_html_category(category) {
-    var html_category = `<button type="button" class="w3-bar-item w3-button" category-id="${category.id}"><span title>${category.title}</span> <span style="padding-left: 10px" class="w3-text-black remove-category" action="remove_category">×</span></button>`;
+    var image_url;
+    if(category && category.list && category.list.length) {
+        image_url = `http://img.youtube.com/vi/${category.list[0].youtube_id}/1.jpg`;
+    }
+    var html_category = `
+    <button type="button" class="w3-bar-item w3-button" category-id="${category.id}">
+        <img src="${image_url}" /> 
+        <span title>${category.title}</span> 
+        <span style="padding-left: 10px" class="w3-text-black remove-category" action="remove_category">×</span>
+    </button>`;
     return html_category;
 }
 
@@ -133,7 +141,7 @@ function get_html_youtube_item(item) {
     var template = $('#li_template').html();
     template = template.replace("{youtube_id}", item.youtube_id);
     template = template.replace("{youtube_id}", item.youtube_id);
-    template = template.replace("{title}", item.title);
+    template = template.replace("{title}", get_short_title(item.title));
     var percentage = 0;
     if(videos_times[item.youtube_id] & item.duration) {
         percentage = videos_times[item.youtube_id] / item.duration * 100.0;
@@ -182,10 +190,13 @@ $(function () {
         $('li[youtube-id]').removeClass('w3-red');
         $(this).addClass('w3-red');
         $('#txt_video_title').text(item.title);
+        var picture = `http://img.youtube.com/vi/${item.youtube_id}/1.jpg`;
+        $('#img_video_picture').attr('src', picture);
+        $(`#bar_categories [category-id="${current_category.id}"] img`).attr('src', picture);
         if (is_arabic(item.title)) {
-            $('#txt_video_title').addClass('rtl');
+            $('#ctr_video_title').addClass('rtl');
         } else {
-            $('#txt_video_title').removeClass('rtl');
+            $('#ctr_video_title').removeClass('rtl');
         }
         var time = parseFloat(videos_times[item.youtube_id] || 0);
         playYoutube(current_item.youtube_id, time);
@@ -264,7 +275,22 @@ $(function () {
     $(document).on('click', '[action="load"]', function () {
         $('#modal_load').show();
     })
+
+    //cloud
+    $('[action="save_to_cloud"]').click(function () {
+        var cont = {categories: categories, videos_times: videos_times, selected_category: current_category.id, selected_item : current_item.youtube_id};
+        save_to_cloud(getCookie('_id'), cont);
+    })
+    $('[action="load_from_cloud"]').click(async function () {
+        var data = await load_from_cloud(getCookie('_id'));
+        localStorage.setItem('categories', JSON.stringify(data.categories));
+        localStorage.setItem('videos_times', JSON.stringify(data.videos_times));
+        localStorage.setItem('current_category', data.selected_category);
+        localStorage.setItem('current_item', data.selected_item);
+        location.reload();
+    })
 })
+
 
 
 
@@ -284,6 +310,7 @@ function download(filename, text) {
 
 function add_youtube(youtube_id) {
     //check if already exists
+    current_category.list = current_category.list || [];
     var item = current_category.list.find(obj => {
         return obj.youtube_id == youtube_id
     });
@@ -340,9 +367,9 @@ $(document).on('click', '[action="load_file"]', function () {
     fr.onload = function () {
         var mem = JSON.parse(fr.result);
         localStorage.setItem('categories', JSON.stringify(mem.categories));
-        localStorage.setItem('categvideos_timesories', JSON.stringify(mem.videos_times));
-        localStorage.setItem('current_category', JSON.stringify(mem.selected_category));
-        localStorage.setItem('current_item', JSON.stringify(mem.selected_item));
+        localStorage.setItem('videos_times', JSON.stringify(mem.videos_times));
+        localStorage.setItem('current_category', mem.selected_category);
+        localStorage.setItem('current_item', mem.selected_item);
         location.reload();
     }
     var file = document.getElementById('file').files[0];
@@ -354,4 +381,12 @@ function removeAds() {
         $('body').removeAttr('style');
         $('body>div').first().remove();
     }
+}
+
+function get_short_title(title) {
+    var max_length = 70;
+    if((title || '').length > max_length) {
+        title = title.substring(0, max_length) + '...';
+    }
+    return title;
 }

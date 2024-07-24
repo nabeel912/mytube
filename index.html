@@ -1,22 +1,52 @@
 <html>
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8">    
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-database.js"></script>
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Zain:wght@200;300;400;700;800;900&display=swap" rel="stylesheet">
-
+    <script src="https://accounts.google.com/gsi/client" async></script>
+    
     <link href="style.css" rel="stylesheet">
     <script src="ui_events.js"></script>
     <script src="youtube_events.js"></script>
+    <script src="login.js"></script>
+    <script src="firebase.js"></script>
 </head>
 
 <body>
     <div class="w3-bar w3-black" id="bar_categories">
+        <!-- Sign In With Google button with HTML data attributes API -->
+        <div id="login_google" class="w3-bar-item w3-button w3-right" style="display: none;">
+            <div id="g_id_onload" data-client_id="712644350761-770himgrlmrdn5spl0atnvot974072fr.apps.googleusercontent.com"
+                data-context="signin" data-ux_mode="popup" data-callback="handleCredentialResponse" data-auto_prompt="false">
+            </div>
+        
+            <div class="g_id_signin" data-type="standard" data-shape="rectangle" data-theme="outline" data-text="signin_with"
+                data-size="small" data-logo_alignment="left">
+            </div>
+        </div>
+        
+        <!--current user-->
+        <div id="user_profile" class="w3-dropdown-hover w3-right" style="display: none;">
+            <button class="w3-button"><img id="profile_picture" src="https://cdn-icons-png.flaticon.com/128/17434/17434977.png" /> <span id="profile_name"></span></button>
+            <div class="w3-dropdown-content w3-bar-block w3-card-4" style="right:0">
+                <a class="w3-bar-item w3-button" action="save_to_cloud">Save to Cloud</a>
+                <a class="w3-bar-item w3-button" action="load_from_cloud">Load from Cloud</a>
+
+                <!--signOut-->
+                <a class="w3-bar-item w3-button" id="logout" onclick="signOut()">Sign Out</a>
+            </div>
+        </div>
+        
+        
+        
         <button type="button" class="w3-bar-item w3-button w3-right" action="add_category">Add category</button>
-        <button type="button" class="w3-bar-item w3-button w3-right" style="display: none;">Status: <span
-                id="status"></span></button>
+
+        
         <div class="w3-dropdown-hover w3-right">
             <button class="w3-button">Actions</button>
             <div class="w3-dropdown-content w3-bar-block w3-card-4">
@@ -36,7 +66,11 @@
             <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
             <div id="player"></div>
 
-            <h3 class="zain-extrabold" id="txt_video_title"></h3>
+            <div id="ctr_video_title" class="zain-extrabold w3-row">
+                <img src="" id="img_video_picture" />
+                <span id="txt_video_title"></span>
+            </div>
+            <h3></h3>
             <div id="player2" style="display: none;"></div>
         </div>
     </div>
@@ -52,12 +86,12 @@
                     {title}
                 </div>
                 <div class="w3-col" style="width: 20px">
-                    <span class="w3-button" action="remove_list_item">×</span>
+                    <span class="w3-button w3-text-white" action="remove_list_item">×</span>
                 </div>
             </div>
-            <div class="w3-row" style="width: calc(100% - 20px);">
-                <div class="w3-light-gray w3-tiny" style="height: 1px;">
-                    <div class="w3-container w3-gray" percentage-bar style="width:{percentage}%; height: 1px;"></div>
+            <div class="w3-row progress-bar">
+                <div class="w3-light-gray w3-tiny">
+                    <div class="w3-gray" percentage-bar style="width:{percentage}%;"></div>
                 </div>
             </div>
         </li>

@@ -36,5 +36,32 @@ iframe {
 
 .w3-ul li {
     padding: 8px 16px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid #fff;
+}
+.w3-ul li:hover {
+    background-color: lightgrey !important;
+    cursor: pointer; 
+    color: black !important;   
+}
+.w3-ul li:hover .w3-button{
+    color: red !important;   
+}
+
+
+button img {
+    width: 20px;
+}
+#img_video_picture {
+    width: 80px;
+}
+
+#img_video_picture {
+    width: 60px; padding-top: 3px; padding-right: 3px;
+}
+#txt_video_title {
+    font-size: 20px;
+}
+
+.progress-bar div{
+    height: 2px !important;
 }
