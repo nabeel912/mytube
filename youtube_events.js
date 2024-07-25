@@ -1,5 +1,4 @@
 var player;
-var player2;
 var done = false;
 // 2. This code loads the IFrame Player API code asynchronously.
 var tag = document.createElement('script');
@@ -25,19 +24,31 @@ function onYouTubeIframeAPIReady() {
             'onStateChange': onPlayerStateChange
         }
     });
-    player2 = new YT.Player('player2', {
-        height: '450',
-        width: '800',
+}
 
-        //videoId: 'M7lc1UVf-VE',
-        playerVars: {
-            'playsinline': 1
-        },
-        events: {
-            //'onReady': onPlayerReady,
-            //'onStateChange': onPlayerStateChange
+var players = {};
+var ready_functions = {};
+function get_youtube_info(youtube_id) {
+    return new Promise((resolve) => {
+        var player_id = get_new_id();
+        ready_functions[player_id] = function() {
+            var title = players[player_id].getVideoData().title;
+            var author = players[player_id].getVideoData().author;
+            var duration = players[player_id].getDuration();
+            var item = { youtube_id: youtube_id, title: title, duration: duration, author: author };
+            delete players[player_id];
+            $(`#player_${player_id}`).remove();
+            resolve(item)
         }
-    });
+        $('body').append(`<div id="player_${player_id}" style="display: none;"></div>`);
+        players[player_id] = new YT.Player(`player_${player_id}`, {
+            videoId: youtube_id,
+            events: {
+                'onReady': ready_functions[player_id],
+                //'onStateChange': onPlayerStateChange
+            }
+        });
+    })
 }
 
 function playYoutube(youtube_id, time) {

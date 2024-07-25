@@ -340,7 +340,7 @@ function download(filename, text) {
 }
 
 
-function add_youtube(youtube_id) {
+async function add_youtube(youtube_id) {
     //check if already exists
     current_category.list = current_category.list || [];
     var item = current_category.list.find(obj => {
@@ -349,16 +349,12 @@ function add_youtube(youtube_id) {
     if (item) {
         alert('It is already added...');
     } else {
-        player2.cueVideoById(youtube_id, 0);
-        setTimeout(() => {
-            var title = player2.getVideoData().title;
-            var author = player2.getVideoData().author;
-            var duration = player2.getDuration();
-            var item = { youtube_id: youtube_id, title: title, duration: duration, author: author };
-            current_category.list.push(item);
-            $('#video_list').append(get_html_youtube_item(item));
-            save_mem();
-        }, 1000);
+        var info = await get_youtube_info(youtube_id);
+
+        var item = { youtube_id: info.youtube_id, title: info.title, duration: info.duration, author: info.author };
+        current_category.list.push(item);
+        $('#video_list').append(get_html_youtube_item(item));
+        save_mem();
     }
 }
 
