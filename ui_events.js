@@ -39,7 +39,7 @@ function monitor_video_time() {
             if (Math.ceil(videos_times[current_item.youtube_id]) == Math.ceil(getVideoDuration())) {
                 player.cueVideoById(current_item.youtube_id);
                 videos_times[current_item.youtube_id] = 0;
-            } else {
+            } else if(videos_times[current_item.youtube_id] != seek_time) {
                 videos_times[current_item.youtube_id] = seek_time;
                 if (!current_item.duration) { //for backward compatibility
                     current_item.duration = duration;
