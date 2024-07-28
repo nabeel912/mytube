@@ -1,0 +1,44 @@
+categories
+	items
+	
+saves_times (local copy only)
+
+	
+transactions
+	remove_item
+	remove_category
+	save_time
+	
+
+
+local_copy
+	last_sync_time
+	
+server_copy
+	categories only
+	
+	
+when sync
+	get server copy
+	add categories newer than last sync time to it
+	add items newer than last sync time to it
+	save_time only newer than last sync time to it
+	
+	compile the new version
+	save it to cloud
+	make sync time equal in server and local
+	
+	
+if same sync time
+	then get whatever client has
+if client is older
+	get whatever server has
+	add to it newer stuff (more than last sync time)
+	remove newer removes (more than last sync time)
+	
+don't remove but change flag to removed and update timestamp
+display only none removed
+after sync remove permenantly
+
+
+server has only fact, no transactions

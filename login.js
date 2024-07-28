@@ -1,5 +1,5 @@
 // Credential response handler function
-function handleCredentialResponse(response) {
+async function handleCredentialResponse(response) {
     // decodeJwtResponse() is a custom function defined by you
     // to decode the credential response.
     const responsePayload = decodeJwtResponse(response.credential);
@@ -17,6 +17,7 @@ function handleCredentialResponse(response) {
     var profile = {name: responsePayload.given_name, picture: responsePayload.picture};
     setCookie('_profile', JSON.stringify(profile));
     toggle_login();
+    await ui_sign_in();
 }
 
 function removeCookie(sKey, sPath, sDomain) {
