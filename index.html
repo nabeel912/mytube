@@ -11,6 +11,7 @@
     <script src="https://accounts.google.com/gsi/client" async></script>
     
     <link href="style.css" rel="stylesheet">
+    <script src="search.js"></script>
     <script src="ui_events.js"></script>
     <script src="youtube_events.js"></script>
     <script src="login.js"></script>
@@ -54,6 +55,7 @@
         </div>
 
         <button type="button" class="w3-bar-item w3-button w3-right" action="add_category">Add category</button>
+        <button type="button" class="w3-bar-item w3-button w3-right" action="search">Search</button>
     </div>
     <div class="w3-row">
         <div class="w3-col" style="width: 400px;">
@@ -157,6 +159,47 @@
 
             <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">
                 <button onclick="document.getElementById('modal_load').style.display='none'" type="button"
+                    class="w3-button w3-red">Close</button>
+            </div>
+
+        </div>
+    </div>
+
+
+
+
+    
+    <!--Search Modal-->
+    <div id="modal_search" class="w3-modal">
+        <div class="w3-modal-content w3-card-4 w3-animate-zoom" style="max-width:600px">
+
+            <div class="w3-center"><br>
+                <span onclick="document.getElementById('modal_search').style.display='none'"
+                    class="w3-button w3-xlarge w3-hover-red w3-display-topright" title="Close Modal">&times;</span>
+                <h3>Search</h3>
+            </div>
+
+            <div class="w3-container">
+                <div class="w3-section">
+
+                    Search:
+                    <datalist id="suggestions">
+                        <option>First option</option>
+                        <option>Second Option</option>
+                    </datalist>
+                    <input type="text" id="txt_search" autoComplete="on" list="suggestions" />
+
+                    <button class="w3-button w3-blue" id="btn_search">Search</button>
+
+                    <div id="search_results">
+
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">
+                <button onclick="document.getElementById('modal_search').style.display='none'" type="button"
                     class="w3-button w3-red">Close</button>
             </div>
 

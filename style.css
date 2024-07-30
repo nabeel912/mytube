@@ -65,3 +65,16 @@ button img {
 .progress-bar div{
     height: 2px !important;
 }
+
+#search_results img {
+    width: 120px;
+    height: 90px;
+}
+#search_results {
+    height: calc(100vh - 400px);
+    overflow-y: auto;
+}
+
+.w3-modal .w3-button {
+    padding: 3px 16px;
+}

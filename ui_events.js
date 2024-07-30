@@ -30,7 +30,7 @@ function monitor_video_time() {
         if (current_item && current_item.youtube_id && player.getVideoData() && player.getVideoData().video_id == current_item.youtube_id) {
             var duration = getVideoDuration();
             var seek_time = getSeekTime();
-            if (Math.ceil(current_item.video_time) == Math.ceil(getVideoDuration())) {//finished
+            if (duration && Math.ceil(current_item.video_time) == Math.ceil(duration)) {//finished
                 current_item.video_time = 0;
                 player.cueVideoById(current_item.youtube_id);
             } else if(current_item.video_time != seek_time) {
@@ -214,6 +214,7 @@ $(function () {
             $(`button[category-id="${id}"]`).click();
         }
     })
+
     $('[action="add_item"]').click(async function () {
         var text = await get_clipboard();
         var user_input = '';
@@ -424,7 +425,7 @@ async function add_youtube(youtube_id) {
     //check if already exists
     current_category.list = current_category.list || [];
     var item = current_category.list.find(obj => {
-        return obj.youtube_id == youtube_id
+        return obj.youtube_id == youtube_id && obj.removed !== 1
     });
     if (item) {
         alert('It is already added...');
