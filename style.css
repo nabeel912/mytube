@@ -1,5 +1,5 @@
 * {
-    font-family: "Zain", sans-serif;
+    font-family: "Zain", sans-serif !important;
     font-style: normal;
     font-size: 15px;
 }
@@ -71,10 +71,35 @@ button img {
     height: 90px;
 }
 #search_results {
-    height: calc(100vh - 400px);
+    height: calc(100vh - 250px);
     overflow-y: auto;
 }
 
 .w3-modal .w3-button {
     padding: 3px 16px;
+}
+
+#txt_search {
+    width: calc(50% - 180px);
+}
+
+#modal_search .w3-modal-content {
+    width: 97vw;
+}
+
+#ctr_search_results {
+    width: 35%;
+}
+
+#player2 {
+    width: 100%;
+    height: calc(50vw/1.2);
+    max-height: calc(100vh - 320px);
+}
+
+.w3-modal {
+    padding-top: 40px !important;
+}
+h4 {
+    margin: 3px 0px;
 }

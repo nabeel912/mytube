@@ -1,4 +1,5 @@
 var player;
+var player2;
 var done = false;
 // 2. This code loads the IFrame Player API code asynchronously.
 var tag = document.createElement('script');
@@ -14,14 +15,22 @@ function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
         height: '585',
         width: '1040',
-        rel: 0,
-        //videoId: 'M7lc1UVf-VE',
         playerVars: {
             'playsinline': 1
         },
         events: {
             'onReady': onPlayerReady,
             'onStateChange': onPlayerStateChange
+        }
+    });
+
+    player2 = new YT.Player('player2', {
+        height: '585',
+        width: '1040',
+        playerVars: {
+            'playsinline': 1
+        },
+        events: {
         }
     });
 }
@@ -52,11 +61,7 @@ function get_youtube_info(youtube_id) {
 }
 
 function playYoutube(youtube_id, time) {
-    player.cueVideoById(youtube_id, time);
-    setTimeout(() => {
-        player.playVideo();
-    }, 300);
-
+    player.loadVideoById(youtube_id, time);
 }
 
 // 4. The API will call this function when the video player is ready.

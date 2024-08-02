@@ -73,10 +73,13 @@ function youtube_is_ready() {
         var item = (current_category.list || []).find(obj => {
             return obj.id == youtube_item_id
         });
-        if (item) {
-            $(`#video_list [youtube-item-id="${item.id}"]`).click();
-        } else {
-            $(`#video_list [youtube-item-id]`).first().click();
+
+        if(!item && current_category.list && current_category.list.length) {
+            item = current_category.list[0];
+        }        
+
+        if(item) {
+            select_youtube_item(item.id, false);
         }
     }
     monitor_video_time();
@@ -183,23 +186,7 @@ $(function () {
     });
     $(document).on('click', 'li[youtube-item-id]', function () {
         var youtube_item_id = $(this).attr('youtube-item-id');
-        var item = current_category.list.find(obj => {
-            return obj.id == youtube_item_id;
-        });
-        current_item = item;
-        $('li[youtube-item-id]').removeClass('w3-red');
-        $(this).addClass('w3-red');
-        $('#txt_video_title').text(item.title);
-        var picture = `http://img.youtube.com/vi/${item.youtube_id}/1.jpg`;
-        $('#img_video_picture').attr('src', picture);
-        $(`#bar_categories [category-id="${current_category.id}"] img`).attr('src', picture);
-        if (is_arabic(item.title)) {
-            $('#ctr_video_title').addClass('rtl');
-        } else {
-            $('#ctr_video_title').removeClass('rtl');
-        }
-        var time = parseFloat(item.video_time || 0);
-        playYoutube(current_item.youtube_id, time);
+        select_youtube_item(youtube_item_id, true);
         save_mem();
     })
     $('[action="add_category"]').click(function () {
@@ -330,6 +317,30 @@ $(function () {
         }
     }
 })
+
+function select_youtube_item(youtube_item_id, start) {
+    var item = current_category.list.find(obj => {
+        return obj.id == youtube_item_id;
+    });
+    current_item = item;
+    $('li[youtube-item-id]').removeClass('w3-red');
+    $(`li[youtube-item-id="${youtube_item_id}"]`).addClass('w3-red');
+    $('#txt_video_title').text(item.title);
+    var picture = `http://img.youtube.com/vi/${item.youtube_id}/1.jpg`;
+    $('#img_video_picture').attr('src', picture);
+    $(`#bar_categories [category-id="${current_category.id}"] img`).attr('src', picture);
+    if (is_arabic(item.title)) {
+        $('#ctr_video_title').addClass('rtl');
+    } else {
+        $('#ctr_video_title').removeClass('rtl');
+    }
+    var time = parseFloat(item.video_time || 0);
+    if(start) {
+        playYoutube(current_item.youtube_id, time);
+    } else {
+        player.cueVideoById(current_item.youtube_id, time);
+    }
+}
 
 async function ui_save_to_cloud() {
     var ts = get_timestamp();

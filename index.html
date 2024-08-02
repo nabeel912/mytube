@@ -171,35 +171,47 @@
     
     <!--Search Modal-->
     <div id="modal_search" class="w3-modal">
-        <div class="w3-modal-content w3-card-4 w3-animate-zoom" style="max-width:600px">
-
-            <div class="w3-center"><br>
-                <span onclick="document.getElementById('modal_search').style.display='none'"
-                    class="w3-button w3-xlarge w3-hover-red w3-display-topright" title="Close Modal">&times;</span>
-                <h3>Search</h3>
-            </div>
+        <div class="w3-modal-content w3-card-4 w3-animate-zoom">
+            <header class="w3-container w3-light-gray"> 
+                <span onclick="close_search()"
+                class="w3-button w3-light-gray w3-xlarge w3-display-topright">&times;</span>
+                <h2>Search</h2>
+               </header>
 
             <div class="w3-container">
                 <div class="w3-section">
-
-                    Search:
                     <datalist id="suggestions">
                         <option>First option</option>
                         <option>Second Option</option>
                     </datalist>
                     <input type="text" id="txt_search" autoComplete="on" list="suggestions" />
 
-                    <button class="w3-button w3-blue" id="btn_search">Search</button>
-
-                    <div id="search_results">
-
+                    <button class="w3-button w3-gray" id="btn_search">Search</button>
+                    <div class="w3-row">
+                        <div class="w3-col" id="ctr_search_results">
+                            <div id="search_results" class="w3-ul w3-card-4"></div>
+                        </div>
+                        <div class="w3-rest">
+                            <div id="player2"></div>
+                            <div class="w3-row" id="search_details">
+                                <div class="w3-col" style="width: 93px;">
+                                    <img id="search_image" style="width: 100%;" />
+                                </div>
+                                <div class="w3-rest">
+                                    <h4 id="search_title"></h4>
+                                    <span id="search_description"></span>
+                                </div>
+                            </div>
+                            
+                        </div>
                     </div>
+                    
 
                 </div>
             </div>
 
             <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">
-                <button onclick="document.getElementById('modal_search').style.display='none'" type="button"
+                <button onclick="close_search()" type="button"
                     class="w3-button w3-red">Close</button>
             </div>
 
