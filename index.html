@@ -179,34 +179,29 @@
                </header>
 
             <div class="w3-container">
-                <div class="w3-section">
-                    <datalist id="suggestions">
-                        <option>First option</option>
-                        <option>Second Option</option>
-                    </datalist>
-                    <input type="text" id="txt_search" autoComplete="on" list="suggestions" />
-
-                    <button class="w3-button w3-gray" id="btn_search">Search</button>
-                    <div class="w3-row">
-                        <div class="w3-col" id="ctr_search_results">
-                            <div id="search_results" class="w3-ul w3-card-4"></div>
-                        </div>
-                        <div class="w3-rest">
-                            <div id="player2"></div>
-                            <div class="w3-row" id="search_details">
-                                <div class="w3-col" style="width: 93px;">
-                                    <img id="search_image" style="width: 100%;" />
-                                </div>
-                                <div class="w3-rest">
-                                    <h4 id="search_title"></h4>
-                                    <span id="search_description"></span>
-                                </div>
-                            </div>
-                            
-                        </div>
+                <div class="w3-row">
+                    <div class="w3-col" id="ctr_search_results">
+                        <datalist id="suggestions">
+                            <option>First option</option>
+                            <option>Second Option</option>
+                        </datalist>
+                        <input type="text" id="txt_search" autoComplete="on" list="suggestions" />
+                        <button class="w3-button w3-gray" id="btn_search">Search</button>
+                        <div id="search_results" class="w3-ul w3-card-4"></div>
                     </div>
-                    
-
+                    <div class="w3-rest">
+                        <div id="player2"></div>
+                        <div class="w3-row" id="search_details">
+                            <div class="w3-col" style="width: 93px;">
+                                <img id="search_image" style="width: 100%;" />
+                            </div>
+                            <div class="w3-rest">
+                                <h4 id="search_title"></h4>
+                                <span id="search_description"></span>
+                            </div>
+                        </div>
+                        
+                    </div>
                 </div>
             </div>
 

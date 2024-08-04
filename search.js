@@ -22,9 +22,39 @@ function search_youtube(term) {
     })
 }
 
+var old_suggests = {};
+function do_auto_suggest(term) {
+    return new Promise((resolve) => {
+        var old_suggests = localStorage.getItem('old_suggests') || '{}';
+        old_suggests = JSON.parse(old_suggests);        
+        if (old_suggests[term]) {
+            resolve(old_suggests[term]);
+        } else {
+            var url = `https://suggestqueries-clients6.youtube.com/complete/search?client=youtube&hl=en&gl=sa&sugexp=ytp13nsb_e500%2Cytpo.bo.sb%3D500%2Cytposo.bo.sb%3D500&gs_rn=64&gs_ri=youtube&tok=jAmUOyb7aQJDzsMspIzQ8w&ds=yt&cp=10&gs_id=1a&q=${term}&callback=google.sbox.p50&gs_gbg=9q6E17PEhMGtU`;
+            $.ajax({
+                url: url,
+                dataType: "jsonp",
+                success: function (data) {
+                    old_suggests[term] = data;
+                    localStorage.setItem('old_suggests', JSON.stringify(old_suggests));
+                    resolve(data);
+                }
+            });
+        }
+    });
+}
+async function auto_suggest(term) {
+    var result = await do_auto_suggest(term);
+    var results = [];
+    for(var item of result[1]) {
+        results.push(item[0]);
+    }
+    return results;
+}
+
 function close_search() {
     player2.pauseVideo();
-    document.getElementById('modal_search').style.display='none';
+    document.getElementById('modal_search').style.display = 'none';
 }
 
 $(function () {
@@ -63,7 +93,7 @@ $(function () {
             if (is_arabic(title)) {
                 css_class = "rtl";
             }
-            if(video_id) {
+            if (video_id) {
                 html_items.push(`
                     <li class="w3-bar">
                         <div class="w3-row ${css_class}" youtube-id="${video_id}">
@@ -86,8 +116,8 @@ $(function () {
     })
 
     $(document).on('click', '#search_results [youtube-id]', function () {
-        if(ls_youtube_id) {
-            s_videos_times[ls_youtube_id] = player2.getCurrentTime();            
+        if (ls_youtube_id) {
+            s_videos_times[ls_youtube_id] = player2.getCurrentTime();
         }
         var youtube_id = $(this).attr('youtube-id');
         var image = $(this).find('img').attr('src');
@@ -115,9 +145,17 @@ $(function () {
         add_youtube(youtube_id);
     })
 
-    $('#txt_search').keypress(function (e) {
+    $('#txt_search').keypress(async function (e) {
         if (e.which == 13) {
             $('#btn_search').click();
+        } else {
+            var html_options = [];
+            var term = $('#txt_search').val();
+            var suggests = await auto_suggest(term);
+            for (suggest of suggests) {
+                html_options.push(`<option>${suggest}</option>`);
+            }
+            $('#suggestions').html(html_options.join(''));
         }
     });
 })

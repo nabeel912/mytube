@@ -80,7 +80,7 @@ button img {
 }
 
 #txt_search {
-    width: calc(50% - 180px);
+    width: calc(100% - 72px);
 }
 
 #modal_search .w3-modal-content {
@@ -93,8 +93,7 @@ button img {
 
 #player2 {
     width: 100%;
-    height: calc(50vw/1.2);
-    max-height: calc(100vh - 320px);
+    height: calc(100vh - 290px);
 }
 
 .w3-modal {
