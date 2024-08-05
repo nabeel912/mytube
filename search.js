@@ -132,6 +132,14 @@ $(function () {
         }
         $('#search_results').html(html_items.join(''));
         $('#search_results')[0].scrollTop = 0;
+        
+               //add to recent plays
+        var item = recent_searchs.find(obj => {
+            return obj.term == search && obj.order == order
+        });
+        if(!item) {
+            recent_searchs.push({term: search, order: order})
+        }
     })
 
     $(document).on('click', '#search_results [youtube-id]', function () {
@@ -156,7 +164,50 @@ $(function () {
         $('#search_results [youtube-id]').removeClass('w3-red');
         $(this).addClass('w3-red');
         player2.loadVideoById(youtube_id, s_videos_times[youtube_id] || 0);
+
+        //add to recent plays
+        var item = recent_search_plays.find(obj => {
+            return obj.youtube_id == youtube_id
+        });
+        if(!item) {
+            recent_search_plays.push({youtube_id: youtube_id, image: image, title: title, description: description});
+        }
     })
+
+    $('#btn_recent_search_play').hover(function() {
+        var html = '';
+        for(var item of recent_search_plays) {
+            html += `<a class="w3-bar-item w3-button" recent-search-play="${item.youtube_id}"><img src="${item.image}" /> ${item.title}</a>`;
+        }
+        $('#recent_search_plays').html(html);
+    })
+    $(document).on('click', '[recent-search-play]', function (event) {
+        if (ls_youtube_id) {
+            s_videos_times[ls_youtube_id] = player2.getCurrentTime();
+        }
+        var youtube_id = $(this).attr('recent-search-play');
+        player2.loadVideoById(youtube_id, s_videos_times[youtube_id] || 0);
+    })
+
+    $('#btn_recent_search').hover(function() {
+        var html = '';
+        for(var item of recent_searchs) {
+            html += `<a class="w3-bar-item w3-button" recent-search="${item.term}">${item.term}, ${item.order}</a>`;
+        }
+        $('#recent_searchs').html(html);
+    })
+    $(document).on('click', '[recent-search]', function (event) {
+        if (ls_youtube_id) {
+            s_videos_times[ls_youtube_id] = player2.getCurrentTime();
+        }
+        var index = $(this).index();
+        var item = recent_searchs[index];
+        $('#txt_search').val(item.term);
+        $('#sel_order').val(item.order);
+        $('#btn_search').click();
+    })
+
+
 
     $(document).on('click', '[add-search-item]', function (event) {
         event.stopPropagation();
@@ -180,3 +231,5 @@ $(function () {
     });
 })
 
+var recent_search_plays = [];
+var recent_searchs = [];

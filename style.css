@@ -121,3 +121,8 @@ input, select {
     width: 70px;
     height: 52.5;
 }
+
+
+#recent_search_plays img {
+    width: 20px;
+}
