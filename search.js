@@ -1,20 +1,35 @@
 var ls_youtube_id;
 s_videos_times = {};
-function search_youtube(term) {
+function search_youtube(term, order) {
     return new Promise((resolve) => {
-        var old_searches = localStorage.getItem('old_searches') || '{}';
-        old_searches = JSON.parse(old_searches);
-        if (old_searches[term]) {
-            resolve(old_searches[term]);
+        var cached_calls = localStorage.getItem('cached_calls') || '{}';
+        cached_calls = JSON.parse(cached_calls);
+
+        var search_terms = localStorage.getItem('search_terms') || '[]';
+        search_terms = JSON.parse(search_terms);
+
+        var url;
+        url = `https://www.googleapis.com/youtube/v3/search?part=snippet&key={key}&maxResults=50&q={search}&type=video`
+        //url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&key={key}&maxResults=50&q={search}&type=video&chart=mostPopular&regionCode=SA`;
+        if(order) {
+            url += `&order=${order}`;
+        }
+        url = url.replace("{search}", term);
+
+        if (cached_calls[url]) {
+            resolve(cached_calls[url]);
         } else {
-            var url = `https://www.googleapis.com/youtube/v3/search?part=snippet&q={search}&key=AIzaSyCI2wJIGo7p1gMx8rZGFlraoPpKHsKKYPU&maxResults=50`
-            url = url.replace("{search}", term);
+            var the_url = url.replace('{key}', 'AIzaSyCI2wJIGo7p1gMx8rZGFlraoPpKHsKKYPU');
             $.ajax({
-                url: url,
+                url: the_url,
                 dataType: "jsonp",
                 success: function (data) {
-                    old_searches[term] = data;
-                    localStorage.setItem('old_searches', JSON.stringify(old_searches));
+                    cached_calls[url] = data;
+                    localStorage.setItem('cached_calls', JSON.stringify(cached_calls));
+                    if(search_terms.indexOf(term) === -1) {
+                        search_terms.push(term);
+                        localStorage.setItem('search_terms', JSON.stringify(search_terms));
+                    }
                     resolve(data);
                 }
             });
@@ -56,7 +71,7 @@ function close_search() {
     player2.pauseVideo();
     document.getElementById('modal_search').style.display = 'none';
 }
-
+var current_search_items = [];
 $(function () {
     document.getElementById("txt_search").addEventListener("input", function (event) {
         if (event.inputType == "insertReplacementText" || event.inputType == null) {
@@ -68,9 +83,9 @@ $(function () {
     $('[action="search"]').click(function () {
         var html_options = [];
 
-        var old_searches = localStorage.getItem('old_searches') || '{}';
-        old_searches = JSON.parse(old_searches);
-        for (term in old_searches) {
+        var search_terms = localStorage.getItem('search_terms') || '[]';
+        search_terms = JSON.parse(search_terms);
+        for (term of search_terms) {
             html_options.push(`<option>${term}</option>`);
         }
 
@@ -81,24 +96,27 @@ $(function () {
 
     $('#btn_search').click(async function () {
         var search = $('#txt_search').val();
-        var result = await search_youtube(search);
+        var order = $('#sel_order').val();
+        var result = await search_youtube(search, order);
         var items = result.items;
         var html_items = [];
         for (var item of items) {
-            var title = item.snippet.title;
-            var description = item.snippet.description;
-            var img = item.snippet.thumbnails.default.url;
-            var video_id = item.id.videoId;
-            var css_class = "ltr";
-            if (is_arabic(title)) {
-                css_class = "rtl";
-            }
-            if (video_id) {
+            var youtube_id = item.id.videoId || item.id;
+            if (youtube_id) {
+                var title = item.snippet.title;
+                var description = item.snippet.description;
+                var image = item.snippet.thumbnails.default.url;
+                current_search_items.push({youtube_id: youtube_id, title: title, image: image, description: description});
+
+                var css_class = "ltr";
+                if (is_arabic(title)) {
+                    css_class = "rtl";
+                }
                 html_items.push(`
                     <li class="w3-bar">
-                        <div class="w3-row ${css_class}" youtube-id="${video_id}">
+                        <div class="w3-row ${css_class}" youtube-id="${youtube_id}">
                             <div class="w3-col" style="width: 130px">
-                                <img src="${img}" />
+                                <img src="${image}" />
                             </div>
                             <div class="w3-col" style="width: calc(100% - 190px)">
                                 <h4 title>${title}</h4>
@@ -113,6 +131,7 @@ $(function () {
 
         }
         $('#search_results').html(html_items.join(''));
+        $('#search_results')[0].scrollTop = 0;
     })
 
     $(document).on('click', '#search_results [youtube-id]', function () {
@@ -141,8 +160,9 @@ $(function () {
 
     $(document).on('click', '[add-search-item]', function (event) {
         event.stopPropagation();
-        var youtube_id = $(this).closest('[youtube-id]').attr('youtube-id');
-        add_youtube(youtube_id);
+        var index = $(this).closest('li').index();
+        var item = current_search_items[index];
+        add_youtube(item.youtube_id);
     })
 
     $('#txt_search').keypress(async function (e) {

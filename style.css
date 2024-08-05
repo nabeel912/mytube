@@ -80,7 +80,10 @@ button img {
 }
 
 #txt_search {
-    width: calc(100% - 72px);
+    width: calc(100% - 72px - 86px);
+}
+#sel_order {
+    width: 83px;
 }
 
 #modal_search .w3-modal-content {
@@ -101,4 +104,20 @@ button img {
 }
 h4 {
     margin: 3px 0px;
+}
+
+
+input, select {
+    height: 27.2px;
+}
+
+
+#video_list li {
+    padding: 0px!important;
+    margin: 0px !important;
+}
+
+#video_list li img {
+    width: 70px;
+    height: 52.5;
 }

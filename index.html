@@ -186,7 +186,16 @@
                             <option>Second Option</option>
                         </datalist>
                         <input type="text" id="txt_search" autoComplete="on" list="suggestions" />
+                        <select id="sel_order">
+                            <option value=""></option>
+                            <option value="date">Date</option>
+                            <option value="rating">Rating</option>
+                            <option value="title">title</option>
+                            <option value="videoCount">videoCount</option>
+                            <option value="viewCount">viewCount</option>
+                        </select>
                         <button class="w3-button w3-gray" id="btn_search">Search</button>
+
                         <div id="search_results" class="w3-ul w3-card-4"></div>
                     </div>
                     <div class="w3-rest">
