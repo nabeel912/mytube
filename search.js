@@ -1,20 +1,19 @@
-var ls_youtube_id;
 s_videos_times = {};
+var cached_calls = JSON.parse(localStorage.getItem('cached_calls') || '{}');
+
+function get_url(term, order) {
+    url = `https://www.googleapis.com/youtube/v3/search?part=snippet&key={key}&maxResults=50&q={search}&type=video`
+    url = url.replace("{search}", term);
+    //url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&key={key}&maxResults=50&q={search}&type=video&chart=mostPopular&regionCode=SA`;
+    if(order) {
+        url += `&order=${order}`;
+    }
+    return url;
+}
+
 function search_youtube(term, order) {
     return new Promise((resolve) => {
-        var cached_calls = localStorage.getItem('cached_calls') || '{}';
-        cached_calls = JSON.parse(cached_calls);
-
-        var search_terms = localStorage.getItem('search_terms') || '[]';
-        search_terms = JSON.parse(search_terms);
-
-        var url;
-        url = `https://www.googleapis.com/youtube/v3/search?part=snippet&key={key}&maxResults=50&q={search}&type=video`
-        //url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&key={key}&maxResults=50&q={search}&type=video&chart=mostPopular&regionCode=SA`;
-        if(order) {
-            url += `&order=${order}`;
-        }
-        url = url.replace("{search}", term);
+        var url = get_url(term, order);       
 
         if (cached_calls[url]) {
             resolve(cached_calls[url]);
@@ -26,10 +25,6 @@ function search_youtube(term, order) {
                 success: function (data) {
                     cached_calls[url] = data;
                     localStorage.setItem('cached_calls', JSON.stringify(cached_calls));
-                    if(search_terms.indexOf(term) === -1) {
-                        search_terms.push(term);
-                        localStorage.setItem('search_terms', JSON.stringify(search_terms));
-                    }
                     resolve(data);
                 }
             });
@@ -81,15 +76,6 @@ $(function () {
     })
 
     $('[action="search"]').click(function () {
-        var html_options = [];
-
-        var search_terms = localStorage.getItem('search_terms') || '[]';
-        search_terms = JSON.parse(search_terms);
-        for (term of search_terms) {
-            html_options.push(`<option>${term}</option>`);
-        }
-
-        $('#suggestions').html(html_options.join(''));
         player.pauseVideo();
         $('#modal_search').show();
     })
@@ -100,6 +86,7 @@ $(function () {
         var result = await search_youtube(search, order);
         var items = result.items;
         var html_items = [];
+        current_search_items = [];
         for (var item of items) {
             var youtube_id = item.id.videoId || item.id;
             if (youtube_id) {
@@ -113,8 +100,8 @@ $(function () {
                     css_class = "rtl";
                 }
                 html_items.push(`
-                    <li class="w3-bar">
-                        <div class="w3-row ${css_class}" youtube-id="${youtube_id}">
+                    <li class="w3-bar" youtube-id="${youtube_id}">
+                        <div class="w3-row ${css_class}">
                             <div class="w3-col" style="width: 130px">
                                 <img src="${image}" />
                             </div>
@@ -138,73 +125,72 @@ $(function () {
             return obj.term == search && obj.order == order
         });
         if(!item) {
-            recent_searchs.push({term: search, order: order})
+            recent_searchs.push({term: search, order: order});
+            localStorage.setItem('recent_searchs', JSON.stringify(recent_searchs));
         }
     })
 
     $(document).on('click', '#search_results [youtube-id]', function () {
-        if (ls_youtube_id) {
-            s_videos_times[ls_youtube_id] = player2.getCurrentTime();
-        }
-        var youtube_id = $(this).attr('youtube-id');
-        var image = $(this).find('img').attr('src');
-        var description = $(this).find('[description]').text();
-        var youtube_id = $(this).attr('youtube-id');
-        ls_youtube_id = youtube_id;
-        var title = $(this).find('[title]').text();
-        $('#search_title').text(title);
-        $('#search_description').text(description);
-        $('#search_image').attr('src', image);
-
-        if (is_arabic(title)) {
-            $('#search_details').addClass('rtl');
-        } else {
-            $('#search_details').removeClass('rtl');
-        }
-        $('#search_results [youtube-id]').removeClass('w3-red');
-        $(this).addClass('w3-red');
-        player2.loadVideoById(youtube_id, s_videos_times[youtube_id] || 0);
-
-        //add to recent plays
-        var item = recent_search_plays.find(obj => {
-            return obj.youtube_id == youtube_id
-        });
-        if(!item) {
-            recent_search_plays.push({youtube_id: youtube_id, image: image, title: title, description: description});
-        }
+        var index = $(this).closest('li').index();
+        var item = current_search_items[index];
+        play_search(item);
     })
 
     $('#btn_recent_search_play').hover(function() {
         var html = '';
         for(var item of recent_search_plays) {
-            html += `<a class="w3-bar-item w3-button" recent-search-play="${item.youtube_id}"><img src="${item.image}" /> ${item.title}</a>`;
+            html += `
+            <a class="w3-bar-item w3-button" recent-search-play="${item.youtube_id}">
+                <img src="${item.image}" /> 
+                ${get_short_title(item.title)}
+                <span close-recent-search-play class="w3-right">X</span>
+            </a>`;
         }
         $('#recent_search_plays').html(html);
     })
     $(document).on('click', '[recent-search-play]', function (event) {
-        if (ls_youtube_id) {
-            s_videos_times[ls_youtube_id] = player2.getCurrentTime();
-        }
-        var youtube_id = $(this).attr('recent-search-play');
-        player2.loadVideoById(youtube_id, s_videos_times[youtube_id] || 0);
+        var index = $(this).index();
+        var item = recent_search_plays[index];
+        play_search(item);
     })
 
     $('#btn_recent_search').hover(function() {
         var html = '';
         for(var item of recent_searchs) {
-            html += `<a class="w3-bar-item w3-button" recent-search="${item.term}">${item.term}, ${item.order}</a>`;
+            html += `
+            <a class="w3-bar-item w3-button" recent-search="${item.term}">
+                ${item.term}, ${item.order}
+                <span close-recent-search class="w3-right">X</span>
+            </a>`;
         }
         $('#recent_searchs').html(html);
     })
     $(document).on('click', '[recent-search]', function (event) {
-        if (ls_youtube_id) {
-            s_videos_times[ls_youtube_id] = player2.getCurrentTime();
-        }
+        s_videos_times[player2.getVideoData().video_id] = player2.getCurrentTime();
         var index = $(this).index();
         var item = recent_searchs[index];
         $('#txt_search').val(item.term);
         $('#sel_order').val(item.order);
         $('#btn_search').click();
+    })
+
+    $(document).on('click', '[close-recent-search-play]', function(event) {
+        var index = $(this).closest('[recent-search-play]').index();
+        recent_search_plays.splice(index, 1); // 2nd parameter means remove one item only
+        localStorage.setItem('recent_search_plays', JSON.stringify(recent_search_plays));
+        $(this).closest('[recent-search-play]').remove();
+    })
+
+    $(document).on('click', '[close-recent-search]', function(event) {
+        var index = $(this).closest('[recent-search]').index();
+        var item = recent_searchs[index];
+        var url = get_url(item.term, item.order);
+        delete cached_calls[url];
+        localStorage.setItem('cached_calls', JSON.stringify(cached_calls));
+
+        recent_searchs.splice(index, 1); // 2nd parameter means remove one item only
+        localStorage.setItem('recent_searchs', JSON.stringify(recent_searchs));
+        $(this).closest('[recent-search]').remove();
     })
 
 
@@ -216,7 +202,7 @@ $(function () {
         add_youtube(item.youtube_id);
     })
 
-    $('#txt_search').keypress(async function (e) {
+    $('#txt_search').keyup(async function (e) {
         if (e.which == 13) {
             $('#btn_search').click();
         } else {
@@ -230,6 +216,30 @@ $(function () {
         }
     });
 })
+function play_search(item) {
+    s_videos_times[player2.getVideoData().video_id] = player2.getCurrentTime();
+    $('#search_title').text(item.title);
+    $('#search_description').text(item.description);
+    $('#search_image').attr('src', item.image);
 
-var recent_search_plays = [];
-var recent_searchs = [];
+    if (is_arabic(item.title)) {
+        $('#search_details').addClass('rtl');
+    } else {
+        $('#search_details').removeClass('rtl');
+    }
+    $('#search_results [youtube-id]').removeClass('w3-red');
+    $(`#search_results [youtube-id="${item.youtube_id}"]`).addClass('w3-red');
+    player2.loadVideoById(item.youtube_id, s_videos_times[item.youtube_id] || 0);
+
+    //add to recent plays
+    var item2 = recent_search_plays.find(obj => {
+        return obj.youtube_id == item.youtube_id
+    });
+    if(!item2) {
+        recent_search_plays.push({youtube_id: item.youtube_id, image: item.image, title: item.title, description: item.description});
+        localStorage.setItem('recent_search_plays', JSON.stringify(recent_search_plays));
+    }
+}
+
+var recent_search_plays = JSON.parse(localStorage.getItem('recent_search_plays') || '[]');
+var recent_searchs = JSON.parse(localStorage.getItem('recent_searchs') || '[]');

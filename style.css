@@ -126,3 +126,14 @@ input, select {
 #recent_search_plays img {
     width: 20px;
 }
+#recent_search_plays {
+    width: 500px;
+    max-height: calc(100vh - 400px);
+    overflow-y: scroll;
+}
+
+#recent_searchs {
+    width: 300px;
+    max-height: calc(100vh - 400px);
+    overflow-y: scroll;
+}
