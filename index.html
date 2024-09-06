@@ -1,15 +1,17 @@
 <html>
+
 <head>
-    <meta charset="UTF-8">    
+    <meta charset="UTF-8">
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/7.14.6/firebase-database.js"></script>
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Zain:wght@200;300;400;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Zain:wght@200;300;400;700;800;900&display=swap"
+        rel="stylesheet">
     <script src="https://accounts.google.com/gsi/client" async></script>
-    
+
     <link href="style.css" rel="stylesheet">
     <script src="search.js"></script>
     <script src="ui_events.js"></script>
@@ -23,18 +25,22 @@
     <div class="w3-bar w3-black" id="bar_categories">
         <!-- Sign In With Google button with HTML data attributes API -->
         <div id="login_google" class="w3-bar-item w3-button w3-right" style="display: none;">
-            <div id="g_id_onload" data-client_id="712644350761-770himgrlmrdn5spl0atnvot974072fr.apps.googleusercontent.com"
-                data-context="signin" data-ux_mode="popup" data-callback="handleCredentialResponse" data-auto_prompt="false">
+            <div id="g_id_onload"
+                data-client_id="712644350761-770himgrlmrdn5spl0atnvot974072fr.apps.googleusercontent.com"
+                data-context="signin" data-ux_mode="popup" data-callback="handleCredentialResponse"
+                data-auto_prompt="false">
             </div>
-        
-            <div class="g_id_signin" data-type="standard" data-shape="rectangle" data-theme="outline" data-text="signin_with"
-                data-size="small" data-logo_alignment="left">
+
+            <div class="g_id_signin" data-type="standard" data-shape="rectangle" data-theme="outline"
+                data-text="signin_with" data-size="small" data-logo_alignment="left">
             </div>
         </div>
-        
+
         <!--current user-->
         <div id="user_profile" class="w3-dropdown-hover w3-right" style="display: none;">
-            <button class="w3-button"><img id="profile_picture" src="https://cdn-icons-png.flaticon.com/128/17434/17434977.png" /> <span id="profile_name"></span></button>
+            <button class="w3-button"><img id="profile_picture"
+                    src="https://cdn-icons-png.flaticon.com/128/17434/17434977.png" /> <span
+                    id="profile_name"></span></button>
             <div class="w3-dropdown-content w3-bar-block w3-card-4" style="right:0">
                 <a class="w3-bar-item w3-button" action="save_to_cloud">Save to Cloud</a>
                 <a class="w3-bar-item w3-button" action="load_from_cloud">Load from Cloud</a>
@@ -44,13 +50,14 @@
                 <a class="w3-bar-item w3-button" action="sign_out">Sign Out</a>
             </div>
         </div>
-      
+
         <div class="w3-dropdown-hover w3-right">
             <button class="w3-button">Actions</button>
             <div class="w3-dropdown-content w3-bar-block w3-card-4">
                 <a class="w3-bar-item w3-button" action="save">Save</a>
                 <a class="w3-bar-item w3-button" action="load">Load</a>
                 <a class="w3-bar-item w3-button" action="about">About</a>
+                <a class="w3-bar-item w3-button" action="full_screen">Full Screen</a>
             </div>
         </div>
 
@@ -58,12 +65,12 @@
         <button type="button" class="w3-bar-item w3-button w3-right" action="search">Search</button>
     </div>
     <div class="w3-row">
-        <div class="w3-col" style="width: 400px;">
+        <div class="w3-col" style="width: 400px;" id="ctr_video_list">
             <ul class="w3-ul w3-card-4" id="video_list" style="overflow-y: scroll;">
             </ul>
             <button type="button" class="w3-button w3-gray" action="add_item">Add Youtube</button>
         </div>
-        <div class="w3-rest">
+        <div class="w3-rest" id="ctr_video_player">
             <!-- 1. The <iframe> (and video player) will replace this <div> tag. -->
             <div id="player"></div>
 
@@ -80,10 +87,12 @@
         <li class="w3-bar" youtube-item-id="{youtube_item_id}">
             <div class="w3-row">
                 <div class="w3-col" style="width: 80px;">
-                    <img src="http://img.youtube.com/vi/{youtube_id}/1.jpg">
+                    {since}
+                    <img src="{image}">
                 </div>
                 <div class="w3-col {class}" style="width: calc(100% - 110px);">
-                    {title}
+                    <h5>{title}</h5>
+                    <span description>{description}</span>
                 </div>
                 <div class="w3-col" style="width: 20px">
                     <span class="w3-button w3-text-white" action="remove_list_item">×</span>
@@ -168,31 +177,32 @@
 
 
 
-    
+
     <!--Search Modal-->
     <div id="modal_search" class="w3-modal">
         <div class="w3-modal-content w3-card-4 w3-animate-zoom">
-            <header class="w3-container w3-light-gray"> 
+            <header class="w3-container w3-light-gray">
+                <!--
                 <span onclick="close_search()"
-                class="w3-button w3-light-gray w3-xlarge w3-display-topright">&times;</span>
+                    class="w3-button w3-light-gray w3-xlarge w3-display-topright">&times;</span>
                 <h2>Search</h2>
-
+                -->
                 <div class="w3-bar w3-light-grey">
                     <a href="#" class="w3-bar-item w3-button">Home</a>
                     <div class="w3-dropdown-hover">
                         <button class="w3-button" id="btn_recent_search">Recent Searchs</button>
                         <div class="w3-dropdown-content w3-bar-block w3-card-4" id="recent_searchs">
                         </div>
-                      </div>
-                    <div class="w3-dropdown-hover">
-                      <button class="w3-button" id="btn_recent_search_play">Recent Search Plays</button>
-                      <div class="w3-dropdown-content w3-bar-block w3-card-4" id="recent_search_plays">
-                      </div>
                     </div>
-                  </div>
-               </header>
+                    <div class="w3-dropdown-hover">
+                        <button class="w3-button" id="btn_recent_search_play">Recent Search Plays</button>
+                        <div class="w3-dropdown-content w3-bar-block w3-card-4" id="recent_search_plays">
+                        </div>
+                    </div>
+                </div>
+            </header>
 
-            <div class="w3-container">
+            <div class="w3-container modal-content">
                 <div class="w3-row">
                     <div class="w3-col" id="ctr_search_results">
                         <datalist id="suggestions">
@@ -212,7 +222,7 @@
 
                         <div id="search_results" class="w3-ul w3-card-4"></div>
                     </div>
-                    <div class="w3-rest">
+                    <div class="w3-rest" id="ctr_search_player">
                         <div id="player2"></div>
                         <div class="w3-row" id="search_details">
                             <div class="w3-col" style="width: 93px;">
@@ -223,14 +233,13 @@
                                 <span id="search_description"></span>
                             </div>
                         </div>
-                        
+
                     </div>
                 </div>
             </div>
 
             <div class="w3-container w3-border-top w3-padding-16 w3-light-grey">
-                <button onclick="close_search()" type="button"
-                    class="w3-button w3-red">Close</button>
+                <button onclick="close_search()" type="button" class="w3-button w3-red">Close</button>
             </div>
 
         </div>

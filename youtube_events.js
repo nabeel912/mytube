@@ -1,4 +1,3 @@
-
 var player;
 var player2;
 var done = false;

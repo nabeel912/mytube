@@ -1,4 +1,3 @@
-
 // Credential response handler function
 async function handleCredentialResponse(response) {
     // decodeJwtResponse() is a custom function defined by you

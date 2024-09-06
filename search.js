@@ -246,3 +246,56 @@ function play_search(item) {
 
 var recent_search_plays = JSON.parse(localStorage.getItem('recent_search_plays') || '[]');
 var recent_searchs = JSON.parse(localStorage.getItem('recent_searchs') || '[]');
+
+function find_item(youtube_id) {
+    for(var i in cached_calls) {
+        for(var item of cached_calls[i].items) {
+            if(youtube_id == item.id || youtube_id == item.id.videoId) {
+                return {youtube_id : youtube_id, description : item.snippet.description, image: item.snippet.thumbnails.default.url, date: item.snippet.publishTime}
+            }
+        }
+    }
+}
+
+function feed_item(item) {
+    if(!item.date) {
+        var _item = find_item(item.youtube_id);
+        if(_item) {
+            item.image = _item.image;
+            item.description = _item.description;
+            item.date = _item.date;
+        } else {
+            item.image = `http://img.youtube.com/vi/${item.youtube_id}/1.jpg`;
+            item.description = '';
+        }
+    }
+}
+
+
+function timeSince(date) {
+
+    var seconds = Math.floor((new Date() - date) / 1000);
+  
+    var interval = seconds / 31536000;
+  
+    if (interval > 1) {
+      return Math.floor(interval) + " years";
+    }
+    interval = seconds / 2592000;
+    if (interval > 1) {
+      return Math.floor(interval) + " months";
+    }
+    interval = seconds / 86400;
+    if (interval > 1) {
+      return Math.floor(interval) + " days";
+    }
+    interval = seconds / 3600;
+    if (interval > 1) {
+      return Math.floor(interval) + " hours";
+    }
+    interval = seconds / 60;
+    if (interval > 1) {
+      return Math.floor(interval) + " minutes";
+    }
+    return Math.floor(seconds) + " seconds";
+  }
