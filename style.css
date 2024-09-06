@@ -118,8 +118,8 @@ input, select {
 }
 
 #video_list li img {
-    width: 70px;
-    height: 52.5;
+    width: 75px;
+    height: 55px;
 }
 
 
@@ -132,8 +132,74 @@ input, select {
     overflow-y: scroll;
 }
 
-#recent_searchs {
-    width: 300px;
-    max-height: calc(100vh - 400px);
-    overflow-y: scroll;
+#search_results h4 {
+    height: 25px;
+    overflow-y: hidden;
+    display: block;
 }
+
+#search_results [description] {
+    height: 40px;
+    display: block;
+}
+#video_list h5 {
+    font-size: 20px;
+    margin: 5px 0;
+    height: 23px;
+    overflow-y: hidden;
+    display: block;
+}
+#video_list [description] {
+    font-size: 10px;
+    height: 28px;
+    overflow-y: hidden;
+    display: block;
+}
+
+
+@media (max-aspect-ratio: 1/1) {
+
+    #video_list {
+        height: calc(100vh - (100vw / 1.77 + 200px));
+    }
+    #ctr_video_list {
+        position: absolute;
+        top: calc(100vw / 1.77 + 150px);
+        width: 50% !important;
+    }
+    
+    #ctr_video_player {
+        position: absolute;
+        width: 100%;
+    
+    }
+    #ctr_video_player iframe {
+        height: calc(100vw / 1.77); 
+    }
+
+
+
+
+    /*search*/
+    #ctr_search_player {
+        position: absolute;
+        width: calc(100% - 30px);
+    }
+    #ctr_search_player iframe {
+        height: calc(100vw / 1.85); 
+    }
+
+    #ctr_search_results {
+        position: absolute;
+        top: calc(100vw / 1.85 + 120px);
+        
+    }
+    #search_results {
+        height: calc(100vh - (100vw / 1.85 + 300px));
+    }
+    #modal_search .modal-content{
+        height: calc(100vh - 170px);
+    }
+    #modal_search header {
+        padding-top: 10px;
+    }

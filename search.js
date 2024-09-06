@@ -3,7 +3,7 @@ var cached_calls = JSON.parse(localStorage.getItem('cached_calls') || '{}');
 
 function get_url(term, order) {
     url = `https://www.googleapis.com/youtube/v3/search?part=snippet&key={key}&maxResults=50&q={search}&type=video`
-    url = url.replace("{search}", term);
+    url = url.replace("{search}", encodeURIComponent(term));
     //url = `https://www.googleapis.com/youtube/v3/videos?part=snippet&key={key}&maxResults=50&q={search}&type=video&chart=mostPopular&regionCode=SA`;
     if(order) {
         url += `&order=${order}`;
@@ -13,7 +13,7 @@ function get_url(term, order) {
 
 function search_youtube(term, order) {
     return new Promise((resolve) => {
-        var url = get_url(term, order);       
+        var url = get_url(term, order);
 
         if (cached_calls[url]) {
             resolve(cached_calls[url]);
@@ -93,7 +93,8 @@ $(function () {
                 var title = item.snippet.title;
                 var description = item.snippet.description;
                 var image = item.snippet.thumbnails.default.url;
-                current_search_items.push({youtube_id: youtube_id, title: title, image: image, description: description});
+                var date = item.snippet.publishTime;
+                current_search_items.push({youtube_id: youtube_id, title: title, image: image, description: description, date: date});
 
                 var css_class = "ltr";
                 if (is_arabic(title)) {
@@ -103,6 +104,8 @@ $(function () {
                     <li class="w3-bar" youtube-id="${youtube_id}">
                         <div class="w3-row ${css_class}">
                             <div class="w3-col" style="width: 130px">
+                                ${timeSince(new Date(date))}
+                                <br />
                                 <img src="${image}" />
                             </div>
                             <div class="w3-col" style="width: calc(100% - 190px)">
@@ -142,7 +145,7 @@ $(function () {
             html += `
             <a class="w3-bar-item w3-button" recent-search-play="${item.youtube_id}">
                 <img src="${item.image}" /> 
-                ${get_short_title(item.title)}
+                ${item.title}
                 <span close-recent-search-play class="w3-right">X</span>
             </a>`;
         }

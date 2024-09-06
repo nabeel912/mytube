@@ -20,7 +20,7 @@ if (categories_str) {
         }
     ]
 }
-current_category = categories.find(x=> x.list.find(y=> y.id == localStorage.getItem('selected_item'))) || {list : []};
+current_category = categories.find(x=> (x.list || []).find(y=> y.id == localStorage.getItem('selected_item'))) || {list : []};
 if(current_category) {
     current_item = current_category.list.find(x=> x.id == localStorage.getItem('selected_item'));
 }
@@ -138,10 +138,15 @@ function get_html_category(category) {
 }
 
 function get_html_youtube_item(item) {
+    feed_item(item);
     var template = $('#li_template').html();
     template = template.replace("{youtube_item_id}", item.id);
-    template = template.replace("{youtube_id}", item.youtube_id);
     template = template.replace("{title}", get_short_title(item.title));
+    template = template.replace("{image}", item.image);
+    template = template.replace("{description}", item.description);
+    template = template.replace("{since}", timeSince(new Date(item.date)));
+
+    
     var percentage = 0;
     if (item.video_time & item.duration) {
         percentage = item.video_time / item.duration * 100.0;
@@ -274,6 +279,15 @@ $(function () {
     $('[action="sync_with_cloud"]').click(async function () {
         await ui_sync_with_cloud();
         location.reload();        
+    })
+
+    $('[action="full_screen"]').click(async function () {
+        if(fs) {
+            closeFullscreen();
+        } else {
+            openFullscreen();
+        }
+        fs = !fs;
     })
 
     $('[action="sign_out"]').click(async function () {
@@ -443,6 +457,8 @@ async function add_youtube(youtube_id) {
     } else {
         var info = await get_youtube_info(youtube_id);
         var _id = get_new_id();
+
+        feed_item(info);
 
         var item = { id: _id, youtube_id: info.youtube_id, title: info.title, duration: info.duration, video_time: 0, uts: get_timestamp() };
         current_category.list.push(item);
